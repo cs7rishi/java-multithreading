@@ -1,0 +1,21 @@
+******Threads Coordination using Joins*******
+
+How we can guarantee that a thread upon which we depends completes it work,
+by the time we expected
+
+Thread Coordination, Why do we need it ?
+1. Different threads run independently
+2. Order of execution is out of control
+
+Thread Coordination, Naive Solution
+Scenario Thread B response depends on Thread A response
+
+Thread B runs in a loop and checking if Thread A's result
+is ready, this is extremely inefficient and CPU wasteful
+
+Better Solution:
+
+Thread B goes to sleep and let the Thread A finished it result
+than Thread B wakes up
+
+
