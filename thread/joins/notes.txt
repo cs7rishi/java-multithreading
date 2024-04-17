@@ -19,3 +19,15 @@ Thread B goes to sleep and let the Thread A finished it result
 than Thread B wakes up
 
 
+
+"Then, how can it execute thread.join() for rest of the threads in the for loop ?"
+It doesn't, until the first thread.join() returns.
+So if we 2 threads that the main thread is waiting on, and the main thread calls thread.join() in a loop on each of those threads, the main thread blocks on the first thread.join() then when the first thread terminates then the main thread wakes up and proceeds to call thread.join() on the next thread (next iteration).
+If by that time the second thread already terminated, then thread.join() returns immediately, otherwise the main thread waits.
+
+We DO run the threads concurrency.
+Notice that we start ALL the threads first.
+Only after we started all of them, the main thread proceeds to attempt to join on each of the threads.
+While the main thread is waiting for the first thread to terminate, both background threads are running conccurently.
+
+
