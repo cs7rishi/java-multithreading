@@ -35,6 +35,8 @@ Daemon threads have lower priority compared to user threads.
 They rely on user threads to be alive.
 Use daemon threads for background tasks that don't require program completion.
 
+Daemon Property should be set before starting the thread
+
 ****What happens to daemon threads after the jvm terminates ?****
 Daemon threads are automatically terminated when the JVM exits, but only after all non-daemon threads have finished. Here's a breakdown of the process:
 
