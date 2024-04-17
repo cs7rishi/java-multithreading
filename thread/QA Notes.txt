@@ -1,0 +1,5 @@
+What is race condition ?
+
+A race condition is a general term, that describes a situation where two threads are racing independently
+to perform an operation on a shared resource.
+
