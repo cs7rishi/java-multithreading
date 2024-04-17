@@ -1,0 +1,46 @@
+Thread Termination- Why and When ?
+1. Threads consumes resources
+    a. Memory and kernel resouces
+    b. CPU cycle and cache memory
+2. If a thread finishes it work, but application is still running,
+    we want to clean up the thread's resources.
+
+3. If a thread is misbehaving, we want to stop it
+4. By default, the application will not stop as long as least one
+    thread is still running
+
+
+*****************Experiment****************
+1.Application does'nt exit until single thread is running
+2.Running condition is move about thread rushing to complete is execution
+3.If a thread is interrupted during a block call, Interrupted Exception is thrown
+Note: A thread can be interrupted only if thread is executing a jdk method that
+        throws a interrupted exception.
+
+4.Thread spawned thread does'nt exist until it return from the run method, even if it throws
+    InterupptedException, we need to return from the method;
+
+****************Daemon Threads*********************
+
+1. Background tasks, that should not block our application from terminating
+Example: File saving threads in a text Editor
+
+Note: Application do not terminate if a single thread is running, so if we have have functionality
+that is less important/independent, we could set the deamon property true. Therefore when all non-deamon
+threads finish execution, the JVM termninates even if the deamon threads are still running.
+
+Key Points to Remember:
+
+Daemon threads have lower priority compared to user threads.
+They rely on user threads to be alive.
+Use daemon threads for background tasks that don't require program completion.
+
+****What happens to daemon threads after the jvm terminates ?****
+Daemon threads are automatically terminated when the JVM exits, but only after all non-daemon threads have finished. Here's a breakdown of the process:
+
+a. Non-Daemon Threads Finish:
+    The JVM waits for all non-daemon threads, including the main thread, to complete their execution.
+b. JVM Termination:
+    Once all non-daemon threads are done, the JVM initiates the shutdown process.
+c. Daemon Thread Termination:
+    During JVM shutdown, any remaining daemon threads are forcefully stopped.
