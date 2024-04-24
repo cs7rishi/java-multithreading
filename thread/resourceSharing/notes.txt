@@ -1,0 +1,40 @@
+>>>>>>>>>>>>>>>>>>>>>Stack<<<<<<<<<<<<<<<<<<<<<
+
+As soon as thread jumps into a method it allocate a space on top of thread.
+i.e stack frame,
+The variable are pushed into that frame of the method.
+
+The method only has access only to the variable in its own frame.
+Once the method get completed it stack frame is invalidated.
+
+
+Note: The entry in stack happens on first in first out basis
+i.e you need to declare something to be able to use it
+
+##Stack Belong to thread where as heap belongs to process##
+
+Stack's properties
+# All variable belongs to the thread executing on that stack
+# Statically allocated when the thread is created.
+# The stack's size is fixed, and relatively small(platform specific)
+# If our calling hierarchy is too deep. We may get an StackOverflow Exception
+
+>>>>>>>>>>>>>>>>>>>>>HEAP<<<<<<<<<<<<<<<<<<<<<
+
+What is allocated on the Heap ?
+1.Objects(anything created with the new operator)
+   >String
+   >Object
+   >Collection
+2.Members of classes
+3.Static variables
+
+Heap Memory Management
+# Governed and managed by VM garbage collector
+# Objects - stay as long as we have a reference to them
+# Members of classes - exist as long as their parent object exist
+(same life cycle as their parents)
+# Static variables - stays forever
+
+Problems of Resource Sharing ?
+
