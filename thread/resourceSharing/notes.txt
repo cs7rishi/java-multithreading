@@ -37,4 +37,4 @@ Heap Memory Management
 # Static variables - stays forever
 
 Problems of Resource Sharing ?
-
+Race Condition

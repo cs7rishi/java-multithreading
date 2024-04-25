@@ -1,0 +1,19 @@
+
+Core Problem for race condition
+# Shared Resource between thread
+i.e InventoryCounter making items member shared between thread too
+
+#Items++ and item--
+>Are happening in the same time
+>Are not atomic operations
+
+Atomic Operation:
+>An operation or set of operation is considered atomic, if it appears
+to the rest of the system as if it occurred at once.
+>Single step- "all or nothing"
+>No intermediate states
+
+i.e Item++ Not an atomic operation:
+1.Get the value of items            currentValue <- 0
+2.Increment current value by 1      newValue <- currentValue + 1 = 1
+3.Store the result into items       items <- newValue = 1
