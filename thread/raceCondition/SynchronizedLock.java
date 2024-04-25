@@ -1,6 +1,6 @@
 package thread.raceCondition;
 
-public class RaceCondition {
+public class SynchronizedLock {
     public static void main(String[] args) throws InterruptedException {
         InventoryCounter iv = new InventoryCounter();
 
@@ -49,20 +49,28 @@ public class RaceCondition {
     private static class InventoryCounter{
         int counter;
 
+        Object lock = new Object();
+
         InventoryCounter(){
             this.counter = 0;
         }
 
         private void increment(){
-            this.counter++;
+            synchronized (this.lock){
+                this.counter++;
+            }
         }
 
         private void decrement(){
-            this.counter--;
+            synchronized (this.lock){
+                this.counter--;
+            }
         }
 
         private int getItems(){
-            return this.counter;
+            synchronized (this.lock){
+                return this.counter;
+            }
         }
     }
 

@@ -17,3 +17,80 @@ i.e Item++ Not an atomic operation:
 1.Get the value of items            currentValue <- 0
 2.Increment current value by 1      newValue <- currentValue + 1 = 1
 3.Store the result into items       items <- newValue = 1
+
+::::::::::::::::Concurrency Problem::::::::::::::::
+1.Two threads sharing the items counter
+2.Both threads are reading and modifying that in the same time
+3.The operations were not atmoic
+
+::::::::::::::::Critical Section::::::::::::::::::::
+void aggregateFunction(){
+    #### enter Critical Section ######
+    operation1();
+    operation2();
+    operation3();
+    #### exit Critical Section ######
+}
+
+$ If no thread is executing the critical section, thread A
+can enter the critical section and the run it
+$ If another Thread B, and tries it enter critical section
+while Thread A is in it, it would be denied access, and it will be
+suspended until Thread A exists critical section.
+
+
+# JVM provides tool to guard the critical section from concurrent access
+
+::::::::::::::: Synchronized(keyword) - Monitor :::::::::::::
+
+# Locking mechanism
+# Used to restrict access to critical section or entire method to a
+    single thread at a time
+
+# If Thread A is executing synchronized method1 Thread B is deprived of access to
+    method2, because synchronized is applied per object(term is called monitor)
+
+::::::::::::::: Synchronized(keyword) - Lock :::::::::::::
+
+Defining the block of code we consider as critical section to
+restrict access to that section without making the entire method
+synchronized.
+
+Object lock1 = new Object()
+Object lock2 = new Object()
+
+public void method1(){
+    synchronized(lock1){
+    .........
+    }
+}
+
+
+public void method2(){
+    .......... // concurrent execution
+    .......... // concurrent execution
+    synchronized(lock2){ // Non concurrent execution
+    ...........          // Non concurrent execution
+    }
+    .......... // concurrent execution
+    .......... // concurrent execution
+}
+
+
+While threadA is executing critical section in method1,
+    threadB cannot access critical section in method1 but can
+    access critical section in method2
+
+Benefit of Lock:
+    Don't have to make the entire method synchronized
+
+Note:
+    # We want to minimize the amount of code in critical section,
+    this way more code could be executed concurrently by the threads
+    # Synchronized block is Reentrant
+       i.e A Thread cannot prevent itself from entering a critical section
+
+
+
+
+
