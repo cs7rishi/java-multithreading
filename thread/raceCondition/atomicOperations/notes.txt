@@ -1,0 +1,55 @@
+We should not use synchronize keyword at method level, as it the most defensive approach, and
+application behave similar to like single threaded application, we should try to achieve image2,
+as we are able to achieve little bit of parallel performance.
+
+
+Which operation are Atomic
+Note: Unfortunately, most operation are not atomic
+
+# All reference assignment are atomic
+# We can get and set reference to objects atomically
+
+ex: Object A = new Object();
+    Object b = new Object();
+    a = b //atomic
+
+i.e Getter and Setter are atomic
+
+    a. public void setName(String name){
+        this.name = name;
+    }
+
+    b. public String getName(){
+        return this.name;
+    }
+
+# All assignment to primitive types are safe except long and double
+
+i.e reading from and written to the following type
+    a.int
+    b.short
+    c.byte
+    d.float
+    e.char
+    f.boolean
+
+    long and double because they are 64 bit long for them java does'nt provide
+    any gurantee, even if you have 64 bit compiler
+
+    x = y;
+    x.lower_32_bits <- y.lower_32_bits
+    x.upeer_32_bits <- y.upeer_32_bits
+
+    Chances are in case of long and double the operation would be
+    completed in 2 steps
+
+# Assignment to long and double if declared volatile, then read from and write to
+   are thread safe and atmoic
+
+   volatile double x = 1.0
+   volatile double y = 9.0
+
+   x = y; //atomic
+
+Note: Checkout java.util.concurrent.atomic
+        More advance and provide lock free atomic operation
