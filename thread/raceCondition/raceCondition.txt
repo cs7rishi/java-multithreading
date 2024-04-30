@@ -1,0 +1,115 @@
+::::::::::::::::Race Condition:::::::::::::::::
+
+# Condition when multiple thread are accessing a shared resource.
+# At least one thread is modifying the resource
+# The timing of threads scheduling may cause incorrect results
+# The core of the problem is non atomic operations performed on the shared
+    resource
+
+:::::::::::::::Race Condition - Solution:::::::::::::::::
+
+# Identification of the critical section where the race condition
+    is happening
+# Protection of the critical section by a synchronized block
+
+
+Data Race:
+
+Example
+int x = 0;
+int y = 0;
+
+checkForDataRace            Increment
+1. y <- 0
+2. x <- 0
+
+                            3. x++
+                            4. y++
+                            ..
+                            ..
+                            101. x++
+                            102. y++
+
+Even if method interleave, x is going to be greater than Y really, there are not
+other possibilities
+
+That's doesn't hold true
+
+:::::::::::::::: Data Race - Problem ::::::::::::::::
+
+> Compiler and CPU may execute the instructions Out Of Order to optimize performance
+    and utilization.
+> They will do so while maintaining the logical correctness of the code.
+> Out of Order execution by the compiler and CPU are important features to
+    speed up the code.
+# The compiler re-arrange instruction for better
+    $ Branch predication(optimized loops, "if" statements etc.)
+    $ Vectorization - parallel instruction execution(SIMD)
+    $ Prefetching instructions- better cache performance.
+# CPU re-arranges instructions for better hardware units utilization.
+Note: It would do that only if its logically correct
+
+ex: public void someFunction(){
+    x = 1;
+    y = x + 2;
+    z = y + 10;
+}
+
+Above function would definitely be not executed out of order
+
+ex: public void increment1(){
+        x++;
+        y++;
+    }
+
+    public void increment(){
+        y++;
+        x++;
+    }
+
+
+Both the above function are equivalent logically, hence can be reordered
+
+:::::::::::::::::::: Data Race- Consequences ::::::::::::::::::::
+
+May Lead to unexpected, paradoxical and incorrect results
+
+::::::::::::: Data Race - Solutions:::::::::::::::::::::
+
+Establish a Happens - Before semantics by one of these methods:
+> Synchronization of method which modify shared variables
+> Declaration of shared variables with the volatile keyword
+
+Using volatile
+
+volatile int sharedVar;
+
+public void method(){
+    ...//All instruction will be executed before
+    read/write(sharedVar);
+    ...//All instruction will be executed after
+}
+
+
+
+Summary:
+> Two problems with multithreaded applications
+    # Race Conditions
+    # Data Races
+> Both Involve
+    # Multiple Threads
+    # At least one is modifying a shared resource
+> Both problems may result in unexpected and incorrect results
+
+> Synchronized- Solves both Race Conditions and Data Races, but has a performance penalty.
+> Volatile -
+    a. Solves Race Condition for read/write from/to long and double
+    b. Solves all Data Races by guaranteeing order
+
+
+Rule of Thumb
+> Every shared variable(modified by at least one thread) should be either
+    a. Guarded by a synchronized block (or any type of lock)
+        OR
+    b. Declare volatile
+
