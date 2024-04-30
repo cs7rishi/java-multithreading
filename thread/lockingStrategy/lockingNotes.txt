@@ -1,0 +1,67 @@
+:::::::::::::::: Lock Strategy ::::::::::::::::::
+
+Fine-Grained Locking
+> Should we have a separate lock for every resource.
+> Simple to maintain
+>
+
+Coarse-Grained Locking
+> Should we have one single lock for all the shared resources
+> Hard to maintain
+
+:::::::::::Problem:::::::::::::::
+When we have multiple lock to maintain, we could run into a DEADLOCK
+
+:::::::::::::DeadLock::::::::::::
+
+Thread 1                            Thread 2
+lock(A)                             lock(B)
+ lock(B)                             lock(A)
+  delete(A,item)                      delete(B,item)
+  add(B,item)                         add(A,item)
+ unlock(B)                           unlock(A)
+unlock(A)                           unlock(B)
+
+
+Execution:
+
+   Thread1                          Thread2
+   1.lock(A)
+                                    2.lock(B)
+                                    3.lock(A) - suspended
+   4.lock(B) suspended
+
+                DEADLOCK OCCURED
+
+
+::::::::::: Deadlock Conditions ::::::::::::
+> Mutual Exclusion : Only one thread can have exclusive access to resource
+> Hold and wait: At least one thread is holding a resource and is waiting for another resource
+> Non-preemptive allocation: A resource is released only after the thread is done using it
+> Circular wait: A chain of at least two threads each one is holding one resource and waiting for another resource
+
+
+:::::::::: Solutions ::::::::::::::
+To avoid deadlock, make sure atleast one of the above condition does'nt met.
+
+Easiest: Avoid Circular wait -> Enforce a strict order in lock acquisition
+i.e Acquire lock in the shared resource in same order(below example)
+
+Thread 1                            Thread 2
+lock(A)                             lock(A)
+ lock(B)                             lock(B)
+  delete(A,item)                      delete(B,item)
+  add(B,item)                         add(A,item)
+ unlock(B)                           unlock(A)
+unlock(A)                           unlock(B)
+
+
+:::::::::::: Conclusion ::::::::::::::
+> Enforce a strict order on lock acquisition prevents deadlocks
+> Easy to do with a small number of locks
+> Maybe hard to accomplish if there are many locks in different places
+
+Other Techniques
+>Deadlock detection - Watchdog
+>Thread interruption(not possible with synchronized)
+>tryLock operations(not possible with synchronized) (can be used to check if lock is already acquired)
