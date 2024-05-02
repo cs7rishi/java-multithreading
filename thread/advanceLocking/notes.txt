@@ -1,0 +1,137 @@
+::::::::::::::: ReentrantLock ::::::::::::::
+> Works just like synchronized keyword applied on an object.
+> Require explicit locking and unlocking
+
+
+#ex: using synchronized block
+
+Object lockObject = new Object();
+Resource resource = new Resource();
+....
+....
+
+public void method(){
+    synchronized(lockObject){
+        ..........
+        use(resource)
+    }
+}
+
+ex: using reentrantLock
+Lock lockObject = new ReentrantLock();
+Resource resource = new Resource();
+....
+....
+
+public void method(){
+        lockObject.lock(); //calling these method explicitly
+        ..........
+        use(resource)
+
+        lockObject.unlock(); ////calling these method explicitly
+}
+
+::::::::::: Reentrant Lock - Disadvantage :::::::::::
+
+Lock lockObject = new ReentrantLock();
+.....
+.....
+
+public int use(){
+    lockObject.lock();
+    return value; //won't get a chance to unlock
+}
+
+public int use(){
+    lockObject.lock();
+    throwExceptionMethod(); //won't get a chance to unlock
+    lockObject.unlock();
+}
+
+::::::::::: Reentrant Lock - Solution ::::::::::::::
+USE TRY CATCH BLOCK
+
+Lock lockObject = new ReentrantLock();
+
+public int use() throws SomeException{
+    lockObject.lock();
+    try{
+        someOperation();
+        return value;
+    } finally {
+        lockObject.unlock();
+    }
+}
+
+::::::::::: Reentrant Lock - Why ::::::::::::::::
+
+# For this complexity we are rewarded with more:
+    > Control over the lock
+    > More lock operations
+
+# Query methods - For Testing
+    > getQueuedThreads() - Returns a list of threads waiting to acquire a lock
+    > getOwner() - Return the thread that currently owns the lock
+    > isHeldByCurrentThread() - Queries if the lock is held by the current thread
+    > isLocked() - Queries if the lock is held by any thread
+
+# Lock Fairness
+    > Control over lock's fairness
+    > By default, the ReentrantLock as well as synchronizes keyword
+        do NOT gurantee any fairness
+        ex: If we have many threads to acquire lock on shared resource
+             and one of the thread gets the lock multiple times and other only few
+
+        ReentrantLock(true) //this will make the locking fair
+        $ May reduce the throughput of the application.
+
+::::::::::: ReenterantLock.lockInterruptibly() :::::::::::::
+
+Generally, if in a particular thread we try to acquire a lock which another thread
+is already holding this lock, the current thread would get suspended and not wake up
+until the lock is released.
+
+
+::::::::::: ReenterantLock.tryLock() ::::::::::::::::
+
+####### Method 1 Start ######
+
+lockObject.lock();
+
+try{
+    useResource();
+}finally{
+    lockObject.unlock();
+}
+
+####### Method 1 End ######
+
+> In above method when the lock is tried to be acquired by a thread, but
+is already lock, the thread gets suspended until the lock is release.
+
+
+####### Method 2 Start ######
+if(lockObject.tryLock()){
+    try{
+        useResource();
+    }finally{
+        lockObject.unlock();
+    }
+}
+####### Method 2 End ######
+
+> tryLock() also acquire the lock and also return true.
+> In above method when the lock is tried to be acquired by a thread, but
+   is already locked, the methods return false, and the thread can continue execution(not suspended)
+
+Note:
+    > Under no circumstance does the tryLock() method blocks
+    > Regardless of the state of the lock, it always returns immediately
+
+## TryLock() - Use Cases
+> Real Time applications where suspended a thread on a lock() method is unacceptable
+> ex:
+    $ Vedio/Image processing
+    $ High Speed/Low Latency trading system
+    $ User Interface applications
+
