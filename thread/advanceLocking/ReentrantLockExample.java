@@ -26,7 +26,7 @@ import java.util.concurrent.locks.Lock;
 /**
  * The below java code only works with java 8 only
  */
-public class ReentrantLock extends Application {
+public class ReentrantLockExample extends Application {
     public static void main(String[] args) {
         launch(args);
     }

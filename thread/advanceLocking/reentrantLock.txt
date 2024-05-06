@@ -135,3 +135,11 @@ Note:
     $ High Speed/Low Latency trading system
     $ User Interface applications
 
+
+Note:
+
+1. tryLock() does'nt work like synchronized block, it just lock, you need to check, if lock is acquired by current thread
+By wrapping condition in if(lock.tryLock()), otherwise race condition could occur.
+
+2. if we call lock.unlock() on a lock that another thread has acquired, we will get an exception and our thread will crash
+
