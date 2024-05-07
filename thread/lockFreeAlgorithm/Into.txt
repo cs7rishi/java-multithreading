@@ -1,0 +1,83 @@
+###### Whats is wrong is lock ########
+> As engineers we are always faced with a trade off
+> For most problems there's more than one solution
+> The more tool will have the better we can choose the right tool for the job
+> Being able to choose the right tool for the job is what makes a good engineer
+
+:::::::::: DeadLock :::::::::::::::
+
+> Deadlocks are generally unrecoverable
+> Can bring the application to complete halt
+> The more locks in the application, the higher the chance for a deadlock
+
+:::::::::: Slow Critical Section :::::::::::::::
+> Mutliple thread using the same lock
+> One thread hold the lock for very long
+> That thread will slow down all the other threads
+> All threads become as slow as the slowest thread
+
+::::::::::: Priority Inversion ::::::::::::::::::::
+> Two threads sharing a lock
+ # Low priority thread(document saver)
+ # High Priority thread(UI)
+> Low priority thread acquire the lock, and is preempted (scheduled out)
+> High Priority thread cannot progress because of the low priority thread is not
+scheduled to release the lock
+
+:::::::::::: Thread not releasing a lock(Kill Tolerance) :::::::::::::
+> Thread dies, get interrupted of forgets to release a lock
+> Leaves all thread hanging forever
+> Unrecoverable =, just like deadlock
+> To avoid, developers need to write more complex code
+
+:::::::::::: Performance ::::::::::::::::
+> Performance overhead in having contention
+    # Thread A acquires a lock
+    # Thread B tries to acquire a lock and gets blocked
+    # Thread B is scheduled out(context switch)
+    # Thread B is scheduled back(context switch)
+> Additional overhead may not be noticable for most application
+> But for latency sensitive applications, this overhead can be significant
+
+
+########### Why did we need locks ? #################
+> Multiple threads accessing shared resources
+> At least one thread is modifying the shared resources
+> Non atomic operations
+
+
+############# Non atomic operations - Reason ################
+> Non atomic operations on one shared resource
+> A single Java operations turns into one or more hardware operations
+> Ex: counter++ turns into 3 hardware instructions
+    a. Read count
+    b. Calculate new value
+    c. Store new value to count
+
+    > During these 3 operation, another thread could modify the value
+
+############ Lock Free Solution - BreakDown ##############
+
+> Utilize operations which are guaranteed to be one hardware operation
+> A single hardware operation is
+    a. Atomic by definition
+    b. Thread safe
+
+
+####### Review of all Atomic Instruction till now ##########
+> Read/Assignment on all primitive types(excepts for long and double)
+> Read/Assignment on all reference
+> Read/Assignment on volatile long and double
+
+::::::::::: Avoiding Data Races :::::::::::::::
+> Read/Assignment on all volatile primitive types and reference
+
+
+############# New Atomic Operation ###############
+
+::::::::: AtomicX Classes :::::::::::
+> Classes located in the java.util.concurrent.atomic package
+> Internally used the Unsafe Classes which provides access to low level, native methods
+> Utilize platform specific implementation of atomic operations
+
+Check Fig 1 for method available in the package
