@@ -1,0 +1,203 @@
+################### Semaphore #####################
+> Can be used to restrict the number of "users" to a particular resource
+or a group of resources
+> Unlike the locks that allows only one "user" per resource
+> The semaphore can restrict any given number of users to a resource
+
+ex: parking lot,
+i.e fixed parking spots, that is when parking lot is full, the new cars have to wait
+ else if spot is available, new car can park there
+
+
+:::::::::::: Semaphore - How to Use ::::::::::::::::
+
+example 1
+Semaphore semaphore = new Semaphore(NUMBER_OF_PERMITS)
+semaphore.acquire(5) // NUMBER_OF_PERMITS - 5 now available
+
+useResource();
+
+semaphore.release(5); //NUMBER_OF_PERMITS now available
+
+
+example 1
+Semaphore semaphore = new Semaphore(NUMBER_OF_PERMITS)
+semaphore.acquire(NUMBER_OF_PERMITS) // 0 now available
+
+semaphore.acquire(); //Thread is blocked
+
+::::::::::: Semaphore vs Lock :::::::::::::::
+
+Example Semaphore == Lock
+
+int NUMBER_OF_PERMITS = 1;
+Semaphore semaphore = new Semaphore(NUMBER_OF_PERMITS)
+
+semaphore.acquire() // lock
+
+useResource();
+
+semaphore.release(); //unlock
+
+
+:::::::::: Semaphore - Difference with Locks :::::::::::
+> Semaphore does'nt have a notion of owner thread
+    Semaphore semaphore = new Semaphore(1);
+
+    void function1(){
+        semaphore.acquire();
+        semaphore.acquire(); //Thread is blocked
+    }
+> Many threads can acquire a permit
+
+
+> The same thread can acquire the semaphore multiple times
+> The binary semaphore(initialized with 1 ) is not reentrant
+
+> Semaphore can be released by any thread,
+ # Even can be released by a thread that hasn't actually acquired it
+ # Check Fig 1, due to two thread could enter a critical section
+ # This would'nt happen with lock, as locking thread is required to unlock the lock
+
+
+::::::::::::::::: Producer Consumer Using Semaphore ::::::::::::::::::
+
+Semaphore full = new Semaphore(0);
+Semaphore empty = new Semaphore(1);
+Item item = null;
+
+
+Consumer:                           Producer:
+
+while(true){                        while(true){
+    full.acquire();                     empty.acquire();
+    consumer(item)                      item = produceNewItem();
+    empty.release()                     full.release();
+}                                   }
+
+
+::::::::::: Semaphore: Producer Consumer using Queue :::::::::::::
+
+
+Semaphore full = new Semaphore(0);
+Semaphore empty = new Semaphore(Capacity);
+Queue queue = new ArrayDeque();
+Lock lock = new ReentrantLock();
+
+Consumer:                           Producer:
+
+while(true){                        while(true){
+    full.acquire();                     empty.acquire();
+    lock.lock()                         lock.lock();
+    consumer(item)                      item = produceNewItem();
+    lock.unlock()                       lock.unlock();
+    empty.release()                     full.release();
+}                                   }
+
+
+############## Semaphore as Condition Var ##################
+
+> Calling the acquire() on a Semaphore is equivalent to checking the condition
+ "Is number of permits > 0 ? "
+ Condition a thread required to move onto the next instruction
+
+> If the condition is not met - thread A goes to sleep until another thread
+ changes the semaphore's state
+
+> When threads B calls the release() method, thread A wakes up
+> Thread A checks the condition "is number of permits > 0 ?"
+    # If it is, thread A continues to the next instruction
+
+:::::::::::: Condition Variable ::::::::::::
+
+# Condition variable is generic way of inter thread communication, it allows
+us to use any condition we want to stipulate the continuation of execution of thread
+ex: Fig 5
+
+# Condition variable is always associated with a lock
+# The lock ensure atomic check and modification of the shared variables, involved in the condition
+
+ex:
+Lock lock = new ReentrantLock();
+Condition condition = lock.newCondition();
+String username = null, password = null
+
+Authentication Thread:
+
+lock.lock();
+
+try{
+    while(username == null
+        || password == null){
+            condition.await() //unlock lock, and puts the thread to sleep
+        }
+} finally {
+    lock.unlock();
+}
+
+doStuff();
+
+
+UI Thread:
+lock.lock();
+try{
+    username = userTextBox.getText();
+    password = passwordTextBox.getText();
+    condition.signal();
+}finally{
+    lock.unlock();
+}
+
+:::::::: Condition.await() ::::::::::::
+# void await() - unlock lock, wait until signalled
+# long awaitNanos(long nanosTimesout) - wait no longer than nanosTimeout
+# boolean await(long time, TimeUnit unit) - wait no longer than time, in given time units
+# boolean awaitUntil(Date deadline)- wake up before the deadline date
+
+:::::::::: Condition.signal() :::::::::::::::
+# void signal() - wakes up a single thread, waiting on the condition variable
+# A Thread that wakes up has to reacquire the lock associated with the condition variable.
+# If currently no thread is waiting on the condition variable, the signal method does'nt do anything.
+
+:::::::::: Condition.signalAll() ::::::::::::::::
+
+# void signalAll() - Broadcast a signal to all the threads currently waiting
+    on the condition variable.
+
+# Doesn't need to know how many(if at all) threads are waiting on the condition variable
+  otherwise we would have to release the semaphore as many as many thread are waiting
+
+
+########### Objects as Condition Variables ################
+
+::::::::::: wait(), notify() and notifyAll() :::::::::::
+> The Object class contains the following methods:
+    # public final void wait() throws InterruptedException
+    # public final void notify()
+    # public final void notifyAll()
+> Every Java Class inherits from the Object Class
+> We can use any object as a condition variable and a lock(using synchronized keyword)
+
+> wait() - Causes the current thread to wait until another thread wakes it up
+    # In the wait state, the thread is not consuming any CPU
+> To ways to wake up the waiting thread:
+    # notify() - Wakes up a single thread waiting on that object
+    # notifyAll() - Wakes up all the threads waiting on that object
+> To call wait(), notify() or notifyAll() we need to acquire the monitor of that object
+    (use synchronized on that object)
+
+Example:
+
+public class MySharedClass{
+    private boolean isComplete = false;
+    public synchronized void waitUntilComplete(){
+        while(isComplete == false){
+            this.wait();
+        }
+    }
+
+    public synchronized void complete(){
+        isComplete = true;
+        this.notify();
+    }
+}
