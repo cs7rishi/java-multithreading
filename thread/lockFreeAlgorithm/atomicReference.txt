@@ -1,0 +1,21 @@
+############ AtomicReference<T> ##################
+
+> Atomic Reference, wraps a reference to an object of a class and gives us the ability
+to perform atomic operation on that reference, we can initialize that atomic reference
+
+> AtomicReference(V initialValue)
+> V get() - Return the current value
+> void set(V newValue) - Sets the value to newValue
+
+::::::::::::::: CompareAndSet :::::::::::::::::
+
+> boolean compareAndSet(V expectedValue, V newValue)
+> assigns new value if current value == expectedValue
+> Ignores the new value if the current value != expectedValue
+> Available in all Atomic Class
+> Compiles into an atomic hardware operation
+> Many other atomic methods are internally implemented using CAS(CompareAndSet)
+
+
+
+
